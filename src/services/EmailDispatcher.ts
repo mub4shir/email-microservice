@@ -9,6 +9,7 @@ export async function dispatchEmail({
   vendor_ids,
   payload,
   override,
+  attachments, // ⬅️ new input
 }: {
   template_key: string;
   vendor_ids: string[];
@@ -19,6 +20,11 @@ export async function dispatchEmail({
     bcc?: string[];
     from?: string;
   };
+  attachments?: {
+    filename: string;
+    path: string;
+    contentType?: string;
+  }[];
 }): Promise<void> {
   const template = await EmailTemplate.findOne({ template_key, active: true });
 
@@ -59,10 +65,12 @@ export async function dispatchEmail({
       html,
       text,
       config,
+      attachments, // ⬅️ pass attachments to adapter
     });
 
     console.log(
       "messageImessageIdmessageIdmessageIdmessageIdmessageId",
+
       messageId
     );
 

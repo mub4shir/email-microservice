@@ -4,7 +4,17 @@ import { EmailAdapter } from "./EmailAdapter";
 import { SendArgs } from "../types/email";
 
 export class SMTPAdapter implements EmailAdapter {
-  async send({ from, to, cc, bcc, subject, html, text, config }: SendArgs) {
+  async send({
+    from,
+    to,
+    cc,
+    bcc,
+    subject,
+    html,
+    text,
+    config,
+    attachments,
+  }: SendArgs) {
     const transporter = nodemailer.createTransport({
       host: config.smtp.host,
       port: config.smtp.port,
@@ -23,6 +33,7 @@ export class SMTPAdapter implements EmailAdapter {
       subject,
       html,
       text,
+      attachments, // ⬅️ inject attachments here
     });
 
     return info.messageId;

@@ -8,4 +8,9 @@ export interface SendArgs {
   html?: string;
   text?: string;
   config: any;
+  attachments?: {
+    filename: string;
+    path: string; // or content: Buffer for dynamic attachments
+    contentType?: string;
+  }[];
 }

@@ -2,12 +2,16 @@ import app from "./app";
 import config from "./config/config";
 import { logger } from "./utils/logger";
 import { connectToDatabase } from "./config/database";
+import { setupTemplateDocumentSchedulers } from "./cron/templateDispatcher";
 
 const PORT = config.port || 9000;
 
 async function startServer() {
   try {
     await connectToDatabase();
+    console.log("📦 Starting template schedulers...");
+    await setupTemplateDocumentSchedulers();
+    console.log("✅ Template schedulers setup complete");
     const server = app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
     });

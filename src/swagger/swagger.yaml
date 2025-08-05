@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: Dynamic Email Dispatch API
+  version: 1.0.0
+  description: Sends templated emails using dynamic payload and vendor configurations.
+
+paths:
+  /send-email:
+    post:
+      summary: Send email using a dynamic template
+      operationId: dynamicSendEmail
+      tags:
+        - Email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - template_key
+                - vendor_ids
+                - payload
+              properties:
+                template_key:
+                  type: string
+                  example: welcome_user
+                  description: Unique identifier of the email template.
+                vendor_ids:
+                  type: array
+                  items:
+                    type: string
+                    example: 686f7a8c79b693d71ea4faeb
+                  description: List of email vendor configuration IDs to use for dispatch.
+                payload:
+                  type: object
+                  example:
+                    user:
+                      name: Mubashir
+                  description: Payload used to fill dynamic parts of the template.
+                override:
+                  type: object
+                  description: Optional fields to override vendor email settings.
+                  properties:
+                    to:
+                      type: array
+                      items:
+                        type: string
+                        format: email
+                      example: ["mubashir11131719@gmail.com"]
+                    cc:
+                      type: array
+                      items:
+                        type: string
+                        format: email
+                      example: ["team@example.com"]
+                    bcc:
+                      type: array
+                      items:
+                        type: string
+                        format: email
+                      example: ["audit@example.com"]
+                    from:
+                      type: string
+                      format: email
+                      example: mubashir.ali@radicalminds.co
+                attachments:
+                  type: array
+                  description: Optional email attachments.
+                  items:
+                    type: object
+                    properties:
+                      filename:
+                        type: string
+                        example: invoice.pdf
+                      path:
+                        type: string
+                        example: /tmp/invoice.pdf
+                      contentType:
+                        type: string
+                        example: application/pdf
+      responses:
+        "200":
+          description: Emails dispatched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Emails dispatched
+        "500":
+          description: Failed to send email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to send email

@@ -5,6 +5,13 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { EmailController } from "./controllers/emailController";
 import emailRoutes from "./routes/emailRoutes";
 import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import path from "path";
+import emailTemplateRoutes from "./routes/emailTemplateRoutes";
+import emailSettingRoutes from "./routes/emailSettingRoutes";
+import emailScheduleRoutes from "./routes/emailScheduleRoutes";
+import templateDocumentRoutes from "./routes/templateDocument";
 const app = express();
 app.use(express.json());
 
@@ -12,6 +19,18 @@ app.use(morgan("dev"));
 
 const emailController = container.resolve(EmailController);
 
+// Load the Swagger YAML
+const swaggerDocument = YAML.load(
+  path.join(__dirname, "./swagger/swagger.yaml")
+);
+
+// Mount Swagger UI at /api-docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use("/api/templates", templateDocumentRoutes);
+app.use("/api/email-schedules", emailScheduleRoutes);
+app.use("/api/email-settings", emailSettingRoutes);
+app.use("/api/email-templates", emailTemplateRoutes);
 // Register routes
 app.use("/api/email", emailRoutes(emailController));
 

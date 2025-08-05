@@ -20,8 +20,9 @@ app.use(morgan("dev"));
 const emailController = container.resolve(EmailController);
 
 // Load the Swagger YAML
+
 const swaggerDocument = YAML.load(
-  path.join(__dirname, "./swagger/swagger.yaml")
+  path.resolve(process.cwd(), "src/swagger/swagger.yaml")
 );
 
 // Mount Swagger UI at /api-docs

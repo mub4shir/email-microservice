@@ -4,8 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "nodemon src/server.ts"
+    "start": "nodemon src/server.ts",
+    "build": "tsc && npm run copy-swagger",
+    "copy-swagger": "mkdir -p dist/swagger && cp src/swagger/swagger.yaml dist/swagger/swagger.yaml"
   },
   "keywords": [],
   "author": "",

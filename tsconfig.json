@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "rootDir": "./",
+    "target": "es2020", // ✅ Modern JS support
+    "module": "commonjs", // ✅ Required for PM2 + ts-node compatibility
+    "rootDir": "src", // ✅ Standardized to src/
+    "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "allowJs": true,
     "typeRoots": ["./node_modules/@types", "./types"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "experimentalDecorators": true, // ✅ For tsyringe
+    "emitDecoratorMetadata": true // ✅ For tsyringe
   },
-  "include": ["src/server.ts", "src/config/**/*.ts", "src/controllers/**/*.ts", "src/routes/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"], // ✅ Include all TS files
+  "exclude": ["node_modules", "dist"] // ✅ Ignore build and deps
 }

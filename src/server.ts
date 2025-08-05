@@ -4,7 +4,7 @@ import { logger } from "./utils/logger";
 import { connectToDatabase } from "./config/database";
 import { setupTemplateDocumentSchedulers } from "./cron/templateDispatcher";
 
-const PORT = config.port || 9000;
+const PORT = Number(config.port) || 9000;
 
 async function startServer() {
   try {
@@ -12,7 +12,7 @@ async function startServer() {
     console.log("📦 Starting template schedulers...");
     await setupTemplateDocumentSchedulers();
     console.log("✅ Template schedulers setup complete");
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, "0.0.0.0", () => {
       logger.info(`🚀 Server running on port ${PORT}`);
     });
 

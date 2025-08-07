@@ -4,6 +4,7 @@ import { container } from "tsyringe";
 import { errorHandler } from "./middlewares/errorHandler";
 import { EmailController } from "./controllers/emailController";
 import emailRoutes from "./routes/emailRoutes";
+import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
@@ -12,8 +13,11 @@ import emailTemplateRoutes from "./routes/emailTemplateRoutes";
 import emailSettingRoutes from "./routes/emailSettingRoutes";
 import emailScheduleRoutes from "./routes/emailScheduleRoutes";
 import templateDocumentRoutes from "./routes/templateDocument";
+
 const app = express();
+
 app.use(express.json());
+app.use(cors());
 
 app.use(morgan("dev"));
 

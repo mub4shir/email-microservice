@@ -5,7 +5,7 @@ const TemplateDocumentSchema = new mongoose.Schema(
   {
     organization_uuid: { type: String, required: true },
     campaign_id: { type: String, required: true },
-
+    name: { type: String, required: true },
     recipients: [
       {
         name: { type: String, required: true },

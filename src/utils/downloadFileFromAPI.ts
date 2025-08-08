@@ -47,7 +47,7 @@ export async function downloadFileFromAPI(
     response.headers["content-type"] || "application/octet-stream";
   const ext = contentType.split("/")[1] || "bin";
   const filename = `report-${uuidv4()}.${ext}`;
-  const outputPath = path.resolve(__dirname, "../temp", filename);
+  const outputPath = path.join("/tmp", filename);
 
   await new Promise<void>((resolve, reject) => {
     const stream = fs.createWriteStream(outputPath);

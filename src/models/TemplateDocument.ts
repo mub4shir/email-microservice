@@ -29,7 +29,7 @@ const TemplateDocumentSchema = new mongoose.Schema(
     },
     timezone: {
       type: String,
-      default: "UTC",
+      default: "Asia/Kolkata",
     },
 
     active: { type: Boolean, default: true },

@@ -13,7 +13,7 @@ import emailTemplateRoutes from "./routes/emailTemplateRoutes";
 import emailSettingRoutes from "./routes/emailSettingRoutes";
 import emailScheduleRoutes from "./routes/emailScheduleRoutes";
 import templateDocumentRoutes from "./routes/templateDocument";
-
+import webhookRoutes from "./routes/webhookRoutes";
 const app = express();
 
 app.use(express.json());
@@ -38,6 +38,8 @@ app.use("/api/email-settings", emailSettingRoutes);
 app.use("/api/email-templates", emailTemplateRoutes);
 // Register routes
 app.use("/api/email", emailRoutes(emailController));
+
+app.use("/webhook", webhookRoutes);
 
 // Global error handling middleware
 app.use(errorHandler);

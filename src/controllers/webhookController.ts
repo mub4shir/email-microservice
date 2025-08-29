@@ -29,13 +29,23 @@ export const ticketPaymentWebhook = async (req: Request, res: Response) => {
 
     if (!email) return res.status(400).json({ error: "Missing email" });
 
+    // ✅ apply constants only if missing/empty
     const ticketDetails: TicketDetails = {
-      customerName: name,
-      eventName: event,
-      date,
-      location,
-      quantity: count,
-      orderId,
+      customerName: name && name.trim() !== "" ? name : "Customer",
+      eventName: event && event.trim() !== "" ? event : "Adele Concert",
+      date: date && date.trim() !== "" ? date : "03-September-2025",
+      location:
+        location && location.trim() !== ""
+          ? location
+          : "United Center, 1901 W Madison St, Chicago, IL 60612",
+      quantity: count && count.toString().trim() !== "" ? count : "2",
+      orderId: orderId && orderId.trim() !== "" ? orderId : "7684956",
+
+      // extra constants always set
+      section: "Lower level",
+      row: "Row 19, RD-27, 28",
+      seat: "Seated together",
+      total: "2 x $150 + $10 (some tax) = $310",
     };
 
     const chosenTemplate: EmailTemplateId = id ?? "payment_request";
@@ -90,19 +100,29 @@ export const ticketConfirmedWebhook = async (req: Request, res: Response) => {
         .json({ error: "Missing required query parameter: email" });
     }
 
-    // Map query → TicketDetails used by the confirmation template
+    // Apply query values if present; otherwise use constants (same as payment API)
     const ticket: TicketDetails = {
-      customerName: name,
-      eventName: event,
-      date,
-      location,
-      quantity: count,
-      orderId,
+      customerName: name && name.trim() !== "" ? name : "Customer",
+      eventName: event && event.trim() !== "" ? event : "Adele Concert",
+      date: date && date.trim() !== "" ? date : "03-September-2025",
+      location:
+        location && location.trim() !== ""
+          ? location
+          : "United Center, 1901 W Madison St, Chicago, IL 60612",
+      quantity: count && count.toString().trim() !== "" ? count : "2",
+      orderId: orderId && orderId.trim() !== "" ? orderId : "7684956",
+
+      // Same constant extras so the template renders these rows
+      section: "Lower level",
+      row: "Row 19, RD-27, 28",
+      seat: "Seated together",
+      total: "2 x $150 + $10 (some tax) = $310",
     };
 
-    // Always use confirmation template; subject is fixed in emailService
+    // Always use confirmation template; subject already fixed to "TicketNetwork: Show Confirmed !"
     await sendTicketEmail(email, ticket, "ticket_confirmation", "");
 
+    // If you want silent response like payment, switch to: return res.status(200).end();
     return res.status(200).json({
       ok: true,
       templateUsed: "ticket_confirmation",

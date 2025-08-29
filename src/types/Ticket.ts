@@ -1,4 +1,3 @@
-// src/types/Ticket.ts
 export type EmailTemplateId = "payment_request" | "ticket_confirmation";
 
 export interface TicketDetails {
@@ -6,13 +5,13 @@ export interface TicketDetails {
   date?: string;
   location?: string;
 
-  customerName?: string; // ?name
+  customerName?: string; // ?name → template shows "Customer" if missing
   quantity?: number | string; // ?count
-  orderId?: string; // ?orderId
+  orderId?: string; // ?orderId or constant
 
-  // optional legacy
-  section?: string | null;
-  row?: string | number | null;
-  total?: number | string;
-  seat?: string | null;
+  // extra fields now rendered in the template
+  section?: string | null; // e.g. "Lower level"
+  row?: string | number | null; // e.g. "Row 19, RD-27, 28"
+  total?: number | string; // e.g. "2 x $150 + $10 = $310"
+  seat?: string | null; // e.g. "Seated together"
 }

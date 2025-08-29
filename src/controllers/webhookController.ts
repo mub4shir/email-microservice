@@ -2,47 +2,76 @@ import { Request, Response } from "express";
 import { sendTicketEmail } from "../services/emailService";
 import { TicketDetails, EmailTemplateId } from "../types/Ticket";
 
-export const ticketBookedWebhook = async (req: Request, res: Response) => {
+export const ticketPaymentWebhook = async (req: Request, res: Response) => {
   try {
     const {
-      userEmail,
-      ticketDetails,
-      templateId,
+      id,
+      name,
+      ticketCount,
+      email,
+      event,
+      date,
+      location,
+      section,
+      row,
+      total,
       paymentLink,
-    }: {
-      userEmail: string;
-      ticketDetails: TicketDetails;
-      templateId?: EmailTemplateId;
+    } = req.query as {
+      id?: EmailTemplateId;
+      name?: string;
+      ticketCount?: string;
+      email?: string;
+      event?: string;
+      date?: string;
+      location?: string;
+      section?: string;
+      row?: string;
+      total?: string;
       paymentLink?: string;
-    } = req.body;
+    };
 
-    if (!userEmail || !ticketDetails) {
-      return res.status(400).json({ error: "Missing required fields" });
+    if (!email) {
+      return res
+        .status(400)
+        .json({ error: "Missing required query parameters" });
     }
 
-    // Default to "ticket_confirmation" template if not provided
-    const chosenTemplate: EmailTemplateId = templateId ?? "ticket_confirmation";
+    const ticketDetails: any = {
+      eventName: event,
+      date,
+      location,
+      section,
+      row,
+      quantity: ticketCount,
+      total,
+    };
 
-    // Send email with selected template
+    // ✅ Use `id` as templateId
+    const chosenTemplate: EmailTemplateId = id ?? "ticket_confirmation";
+
     await sendTicketEmail(
-      userEmail,
+      email,
       ticketDetails,
       chosenTemplate,
-      paymentLink ?? ""
+      "https://default-payment-link.com"
     );
 
-    // Only build voice text for confirmation type
     let voiceText: string | undefined;
     if (chosenTemplate === "ticket_confirmation") {
-      voiceText = `Hello! Your ticket for ${ticketDetails.eventName} on ${ticketDetails.date} is confirmed.`;
+      voiceText = `Hello ${
+        name ?? "Customer"
+      }! Your ticket for ${event} on ${date} is confirmed.`;
     } else if (chosenTemplate === "payment_request") {
-      voiceText = `Hello! Please complete payment for ${ticketDetails.eventName} scheduled on ${ticketDetails.date}.`;
+      voiceText = `Hello ${
+        name ?? "Customer"
+      }! Please complete payment for ${event} scheduled on ${date}.`;
     }
 
     return res.status(200).json({
       message: "Webhook processed successfully",
       templateUsed: chosenTemplate,
       voiceText,
+      query: req.query,
     });
   } catch (err) {
     console.error("Webhook error:", err);

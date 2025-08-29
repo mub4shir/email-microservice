@@ -12,7 +12,11 @@ async function startServer() {
     console.log("📦 Starting template schedulers...");
     await setupTemplateDocumentSchedulers();
     console.log("✅ Template schedulers setup complete");
-    const server = app.listen(PORT, "0.0.0.0", () => {
+    // const server = app.listen(PORT, "0.0.0.0", () => {
+    //   logger.info(`🚀 Server running on port ${PORT}`);
+    // });
+
+    const server = app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
     });
 

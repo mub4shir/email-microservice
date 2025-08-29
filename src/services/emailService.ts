@@ -89,6 +89,7 @@ export const sendTicketEmail = async (
     },
   });
 
+  console.log(process.env.SMTP_USER, process.env.SMTP_PASS);
   // Subject per template
   const subjects: Record<EmailTemplateId, string> = {
     ticket_confirmation: `🎟 Your Ticket for ${ticket.eventName} is Confirmed`,

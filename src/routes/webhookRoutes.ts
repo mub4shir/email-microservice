@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { ticketBookedWebhook } from "../controllers/webhookController";
+import { ticketPaymentWebhook } from "../controllers/webhookController";
 
 const router = Router();
 
-router.post("/ticket-booked", ticketBookedWebhook);
+router.get("/payment", ticketPaymentWebhook);
 
 export default router;

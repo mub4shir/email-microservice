@@ -1,80 +1,115 @@
+// src/controllers/webhookController.ts
 import { Request, Response } from "express";
 import { sendTicketEmail } from "../services/emailService";
 import { TicketDetails, EmailTemplateId } from "../types/Ticket";
 
+const SERVER_PAYMENT_LINK = "https://payments.radicalminds.in/checkout/default";
+
 export const ticketPaymentWebhook = async (req: Request, res: Response) => {
   try {
     const {
-      id,
-      name,
-      ticketCount,
-      email,
-      event,
-      date,
-      location,
-      section,
-      row,
-      total,
-      paymentLink,
+      id, // templateId
+      name, // customer name
+      count, // ticket count
+      email, // recipient
+      event, // event name
+      date, // event date
+      location, // event location
+      orderId, // order id
     } = req.query as {
       id?: EmailTemplateId;
       name?: string;
-      ticketCount?: string;
+      count?: string;
       email?: string;
       event?: string;
       date?: string;
       location?: string;
-      section?: string;
-      row?: string;
-      total?: string;
-      paymentLink?: string;
+      orderId?: string;
     };
 
-    if (!email) {
-      return res
-        .status(400)
-        .json({ error: "Missing required query parameters" });
-    }
+    if (!email) return res.status(400).json({ error: "Missing email" });
 
-    const ticketDetails: any = {
+    const ticketDetails: TicketDetails = {
+      customerName: name,
       eventName: event,
       date,
       location,
-      section,
-      row,
-      quantity: ticketCount,
-      total,
+      quantity: count,
+      orderId,
     };
 
-    // ✅ Use `id` as templateId
-    const chosenTemplate: EmailTemplateId = id ?? "ticket_confirmation";
+    const chosenTemplate: EmailTemplateId = id ?? "payment_request";
+
+    // DEBUG (remove later)
+    console.log("[DEBUG query]", req.query);
+    console.log("[DEBUG mapped]", ticketDetails);
+    console.log("[DEBUG templateId]", chosenTemplate);
 
     await sendTicketEmail(
       email,
       ticketDetails,
       chosenTemplate,
-      "https://default-payment-link.com"
+      SERVER_PAYMENT_LINK
     );
 
-    let voiceText: string | undefined;
-    if (chosenTemplate === "ticket_confirmation") {
-      voiceText = `Hello ${
-        name ?? "Customer"
-      }! Your ticket for ${event} on ${date} is confirmed.`;
-    } else if (chosenTemplate === "payment_request") {
-      voiceText = `Hello ${
-        name ?? "Customer"
-      }! Please complete payment for ${event} scheduled on ${date}.`;
-    }
-
     return res.status(200).json({
-      message: "Webhook processed successfully",
+      ok: true,
       templateUsed: chosenTemplate,
-      voiceText,
-      query: req.query,
+      usedPaymentLink: SERVER_PAYMENT_LINK,
+      echoedQuery: req.query,
     });
   } catch (err) {
     console.error("Webhook error:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const ticketConfirmedWebhook = async (req: Request, res: Response) => {
+  try {
+    const {
+      name, // customer name
+      count, // ticket count
+      email, // recipient
+      event, // event name
+      date, // event date
+      location, // event location
+      orderId, // order id
+    } = req.query as {
+      name?: string;
+      count?: string;
+      email?: string;
+      event?: string;
+      date?: string;
+      location?: string;
+      orderId?: string;
+    };
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ error: "Missing required query parameter: email" });
+    }
+
+    // Map query → TicketDetails used by the confirmation template
+    const ticket: TicketDetails = {
+      customerName: name,
+      eventName: event,
+      date,
+      location,
+      quantity: count,
+      orderId,
+    };
+
+    // Always use confirmation template; subject is fixed in emailService
+    await sendTicketEmail(email, ticket, "ticket_confirmation", "");
+
+    return res.status(200).json({
+      ok: true,
+      templateUsed: "ticket_confirmation",
+      echoedQuery: req.query,
+    });
+  } catch (err) {
+    console.error("ticketConfirmedWebhook error:", err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

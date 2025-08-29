@@ -16,10 +16,6 @@ async function startServer() {
       logger.info(`🚀 Server running on port ${PORT}`);
     });
 
-    // const server = app.listen(PORT, () => {
-    //   logger.info(`🚀 Server running on port ${PORT}`);
-    // });
-
     // Graceful shutdown
     process.on("SIGINT", () => {
       logger.info("SIGINT received, shutting down server...");

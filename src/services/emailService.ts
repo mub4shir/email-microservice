@@ -70,10 +70,11 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
   }
 };
 
-// src/services/emailService.ts
-
 import { emailTemplates } from "./emailTemplates";
 import { TicketDetails, EmailTemplateId } from "../types/Ticket";
+
+const SUBJECT_PAYMENT = "TicketNetwork: Payment for your next Show !";
+const SUBJECT_CONFIRM = "TicketNetwork: Show Confirmed !"; // ✅ fixed per your ask
 
 export const sendTicketEmail = async (
   toEmail: string,
@@ -82,38 +83,23 @@ export const sendTicketEmail = async (
   paymentLink: string = ""
 ): Promise<void> => {
   const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    host: process.env.SMTP_HOST!,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_PORT === "465",
+    auth: { user: process.env.SMTP_USER!, pass: process.env.SMTP_PASS! },
   });
 
-  console.log(process.env.SMTP_USER, process.env.SMTP_PASS);
-  // Subject per template
-  const subjects: Record<EmailTemplateId, string> = {
-    ticket_confirmation: `🎟 Your Ticket for ${ticket.eventName} is Confirmed`,
-    payment_request: `💳 Complete Payment for ${ticket.eventName}`,
-  };
-  const subject = subjects[templateId] ?? "Your Ticket Update";
+  const subject =
+    templateId === "payment_request" ? SUBJECT_PAYMENT : SUBJECT_CONFIRM; // ✅
 
-  // Choose template (with safe fallback)
   const templateFn =
     emailTemplates[templateId] ?? emailTemplates["ticket_confirmation"];
-
-  // Warn if payment template missing a link (but still send)
-  if (templateId === "payment_request" && !paymentLink) {
-    console.warn(
-      "[emailService] payment_request template used without paymentLink."
-    );
-  }
-
-  const htmlTemplate = templateFn(ticket, paymentLink);
+  const html = templateFn(ticket, paymentLink);
 
   await transporter.sendMail({
-    from: `"Ticket Service" <${process.env.EMAIL_USER}>`,
+    from: `"Ticket Service" <${process.env.SMTP_USER}>`,
     to: toEmail,
     subject,
-    html: htmlTemplate,
+    html,
   });
 };

@@ -70,40 +70,49 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
   }
 };
 
-import { TicketDetails } from "../types/Ticket";
+// src/services/emailService.ts
+
+import { emailTemplates } from "./emailTemplates";
+import { TicketDetails, EmailTemplateId } from "../types/Ticket";
 
 export const sendTicketEmail = async (
   toEmail: string,
-  ticket: TicketDetails
+  ticket: TicketDetails,
+  templateId: EmailTemplateId = "ticket_confirmation",
+  paymentLink: string = ""
 ): Promise<void> => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
-  const htmlTemplate = `
-  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px;">
-    <h2 style="color: #333;">🎟 Your Ticket Confirmation</h2>
-    <p>Dear Customer,</p>
-    <p>Your ticket has been successfully booked. Here are the details:</p>
-    <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 10px;">
-      <p><strong>Event:</strong> ${ticket.eventName}</p>
-      <p><strong>Date:</strong> ${ticket.date}</p>
-      <p><strong>Location:</strong> ${ticket.location}</p>
-      <p><strong>Seat:</strong> ${ticket.seat}</p>
-    </div>
-    <p style="margin-top: 20px;">Thank you for booking with us!</p>
-    <footer style="font-size: 12px; color: #888; margin-top: 20px;">This is an automated email. Please do not reply.</footer>
-  </div>
-  `;
+  // Subject per template
+  const subjects: Record<EmailTemplateId, string> = {
+    ticket_confirmation: `🎟 Your Ticket for ${ticket.eventName} is Confirmed`,
+    payment_request: `💳 Complete Payment for ${ticket.eventName}`,
+  };
+  const subject = subjects[templateId] ?? "Your Ticket Update";
+
+  // Choose template (with safe fallback)
+  const templateFn =
+    emailTemplates[templateId] ?? emailTemplates["ticket_confirmation"];
+
+  // Warn if payment template missing a link (but still send)
+  if (templateId === "payment_request" && !paymentLink) {
+    console.warn(
+      "[emailService] payment_request template used without paymentLink."
+    );
+  }
+
+  const htmlTemplate = templateFn(ticket, paymentLink);
 
   await transporter.sendMail({
     from: `"Ticket Service" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Your Ticket is Confirmed!",
+    subject,
     html: htmlTemplate,
   });
 };

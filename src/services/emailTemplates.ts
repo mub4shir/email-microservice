@@ -194,7 +194,7 @@ export const emailTemplates: Record<
     }),
   ticket_confirmation: (ticket, paymentLink) =>
     renderEmailShell({
-      title: "🎟 Your Ticket Confirmation",
+      title: "Your Ticket Confirmation",
       ribbonText: "",
       ticket,
       buttonLabel: paymentLink ? "View Order" : undefined,

@@ -177,7 +177,7 @@ export const emailTemplates: Record<
   payment_request: (ticket, paymentLink) =>
     renderEmailShell({
       title: "Please proceed with payment for your upcoming show",
-      ribbonText: "Payment Pending",
+      ribbonText: "",
       intro: `Hi <strong>${fmt(
         ticket.customerName,
         "Customer"
@@ -195,7 +195,7 @@ export const emailTemplates: Record<
   ticket_confirmation: (ticket, paymentLink) =>
     renderEmailShell({
       title: "Your Ticket Confirmation",
-      ribbonText: "Booking Confirmed",
+      ribbonText: "",
       intro: `Hi <strong>${fmt(
         ticket.customerName,
         "Customer"

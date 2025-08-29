@@ -15,10 +15,25 @@ const defaultLogo =
 const defaultBanner =
   "https://www.uber-arena.de/assets/img/Adele_WS_960x363px_01_02.jpg";
 
+// ✅ Signature block
+const signatureBlock = `
+  <p style="margin:24px 0 0 0;color:#444;font-size:14px;line-height:1.6;">
+    If you have any questions or need help, reply to this email or contact us at 
+    <a href="mailto:support@ticketnetwork.com" style="color:#0056B3;">support@ticketnetwork.com</a>.<br>
+    Thank you for choosing <strong>TicketNetwork</strong>. We look forward to seeing you at the event!
+  </p>
+  <p style="margin:16px 0 0 0;color:#444;font-size:14px;line-height:1.6;">
+    Best regards,<br>
+    <strong>TicketNetwork Team</strong><br>
+    🌐 <a href="https://www.ticketnetwork.com" style="color:#0056B3;">www.ticketnetwork.com</a><br>
+    📧 <a href="mailto:support@ticketnetwork.com" style="color:#0056B3;">support@ticketnetwork.com</a>
+  </p>
+`;
+
 function renderEmailShell(opts: {
   title: string;
   ribbonText: string;
-  intro: string; // 👈 added intro paragraph
+  intro: string;
   ticket: TicketDetails;
   buttonLabel?: string;
   buttonHref?: string;
@@ -134,6 +149,9 @@ function renderEmailShell(opts: {
                 </table>
 
                 ${buttonBlock}
+
+                <!-- Signature -->
+                ${signatureBlock}
               </td>
             </tr>
 
@@ -159,7 +177,7 @@ export const emailTemplates: Record<
   payment_request: (ticket, paymentLink) =>
     renderEmailShell({
       title: "Please proceed with payment for your upcoming show",
-      ribbonText: "",
+      ribbonText: "Payment Pending",
       intro: `Hi <strong>${fmt(
         ticket.customerName,
         "Customer"
@@ -177,7 +195,7 @@ export const emailTemplates: Record<
   ticket_confirmation: (ticket, paymentLink) =>
     renderEmailShell({
       title: "Your Ticket Confirmation",
-      ribbonText: "",
+      ribbonText: "Booking Confirmed",
       intro: `Hi <strong>${fmt(
         ticket.customerName,
         "Customer"

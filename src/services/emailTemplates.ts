@@ -10,16 +10,15 @@ const esc = (v?: string | number | null) =>
 const fmt = (v?: string | number | null, fallback = "—") =>
   v === undefined || v === null || String(v).trim() === "" ? fallback : esc(v);
 
-// Default assets (can be swapped later)
 const defaultLogo =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQY3Fdmiw8xUoj8W5S6SLBwEfJDX_mnaNGXg&s";
 const defaultBanner =
   "https://www.uber-arena.de/assets/img/Adele_WS_960x363px_01_02.jpg";
 
-// Fully inline, table-based email shell (email-client friendly)
 function renderEmailShell(opts: {
   title: string;
   ribbonText: string;
+  intro: string; // 👈 added intro paragraph
   ticket: TicketDetails;
   buttonLabel?: string;
   buttonHref?: string;
@@ -29,6 +28,7 @@ function renderEmailShell(opts: {
   const {
     title,
     ribbonText,
+    intro,
     ticket,
     buttonLabel,
     buttonHref,
@@ -92,73 +92,45 @@ function renderEmailShell(opts: {
 
             <!-- Content -->
             <tr>
-              <td style="padding:24px 20px;font-family:Arial,Helvetica,sans-serif;color:#222222;">
+              <td style="padding:16px 20px;font-family:Arial,Helvetica,sans-serif;color:#222222;">
                 <h2 style="margin:0 0 8px 0;font-size:22px;font-weight:700;">${esc(
                   title
                 )}</h2>
-                <p style="margin:0 0 16px 0;color:#666666;font-size:14px;line-height:1.5;">
-                  Hello <strong>${fmt(
-                    ticket.customerName,
-                    "Customer"
-                  )}</strong>, please review your order details below.
+                
+                <!-- Intro paragraph -->
+                <p style="margin:0 0 16px 0;color:#444;font-size:14px;line-height:1.6;">
+                  ${intro}
                 </p>
 
                 <!-- Details table -->
                 <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Order ID:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.orderId
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Event:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.eventName
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Date:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.date
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Location:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.location
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Section:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.section
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Row:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.row
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Tickets:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.quantity
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Seats:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.seat
-                    )}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#555555;font-weight:bold;width:150px;font-size:14px;">Total:</td>
-                    <td style="padding:8px 0;font-size:14px;color:#333333;">${fmt(
-                      ticket.total
-                    )}</td>
-                  </tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;width:150px;">Order ID:</td><td>${fmt(
+                    ticket.orderId
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Event:</td><td>${fmt(
+                    ticket.eventName
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Date:</td><td>${fmt(
+                    ticket.date
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Location:</td><td>${fmt(
+                    ticket.location
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Section:</td><td>${fmt(
+                    ticket.section
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Row:</td><td>${fmt(
+                    ticket.row
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Tickets:</td><td>${fmt(
+                    ticket.quantity
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Seats:</td><td>${fmt(
+                    ticket.seat
+                  )}</td></tr>
+                  <tr><td style="padding:8px 0;font-weight:bold;color:#555;">Total:</td><td>${fmt(
+                    ticket.total
+                  )}</td></tr>
                 </table>
 
                 ${buttonBlock}
@@ -167,7 +139,7 @@ function renderEmailShell(opts: {
 
             <!-- Footer -->
             <tr>
-              <td align="center" style="background-color:#F0F0F0;color:#777777;font-size:12px;padding:15px;font-family:Arial,Helvetica,sans-serif;">
+              <td align="center" style="background-color:#F0F0F0;color:#777;font-size:12px;padding:15px;font-family:Arial,Helvetica,sans-serif;">
                 © ${new Date().getFullYear()} TicketNetwork. All rights reserved.
               </td>
             </tr>
@@ -186,16 +158,35 @@ export const emailTemplates: Record<
 > = {
   payment_request: (ticket, paymentLink) =>
     renderEmailShell({
-      title: "Complete Your Payment",
+      title: "Please proceed with payment for your upcoming show",
       ribbonText: "",
+      intro: `Hi <strong>${fmt(
+        ticket.customerName,
+        "Customer"
+      )}</strong>,<br><br>
+              Thank you for reserving your tickets for the upcoming <strong>${fmt(
+                ticket.eventName,
+                "Show"
+              )}</strong> event.<br>
+              To complete your purchase, please review your order details and click the link below to make your payment.`,
       ticket,
       buttonLabel: "Pay Now",
       buttonHref: paymentLink,
     }),
+
   ticket_confirmation: (ticket, paymentLink) =>
     renderEmailShell({
       title: "Your Ticket Confirmation",
       ribbonText: "",
+      intro: `Hi <strong>${fmt(
+        ticket.customerName,
+        "Customer"
+      )}</strong>,<br><br>
+              Your booking for <strong>${fmt(
+                ticket.eventName,
+                "Show"
+              )}</strong> is confirmed!<br>
+              Please review your ticket details below.`,
       ticket,
       buttonLabel: paymentLink ? "View Order" : undefined,
       buttonHref: paymentLink,

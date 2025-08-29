@@ -39,7 +39,7 @@ app.use("/api/email-templates", emailTemplateRoutes);
 // Register routes
 app.use("/api/email", emailRoutes(emailController));
 
-app.use("/webhook", webhookRoutes);
+app.use("connector/ticketnetwork", webhookRoutes);
 
 // Global error handling middleware
 app.use(errorHandler);
